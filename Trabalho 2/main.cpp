@@ -7,10 +7,8 @@
 
     Aluno: João Victor Mendes Freire
     RA: 758943
-*/
 
-/*
-    Resolução baseada nas notas de aula do Prof. Mario San Felice:
+    Resolução inspirada nas notas de aula do Prof. Mario San Felice:
     - http://www2.dc.ufscar.br/~mario/ensino/2018s2/paa/aula16/algoritmoPrim.txt
     E no site GeeksForGeeks:
     - https://www.geeksforgeeks.org/prims-algorithm-using-priority_queue-stl/
@@ -23,11 +21,10 @@
 
 #define INF 0x3f3f3f3f 
 
-using namespace std;
-
 class Graph
 {
     public:
+    // Construtor
     Graph(int n);
 
     // Cria uma aresta entre dois vértices v, u pertencentes à [0..n]
@@ -37,8 +34,8 @@ class Graph
     int MST();
 
     private:
-    int n; // Número de vértices
-    list< pair<int, int> > *adj;
+    int n;                                   // Número de vértices
+    std::list< std::pair<int, int> > *adj;   // Lista de adjacências
 };
 
 int main(int argc, char **argv)
@@ -49,15 +46,16 @@ int main(int argc, char **argv)
     scanf("%d %d ", &num_routers, &num_cables);
     Graph G(num_routers);
 
-    // Mapeando grafo
+    // Definindo as arestas do grafo G (cabos de internet)
     for (int i = 0; i < num_cables; i++)
     {
         scanf("%d %d %d ", &v, &w, &price);
         G.add_edge(v - 1, w - 1, price);
     }
 
-    // Retornando valor da soma dos pesos das arestas na MST
-    printf("%d\n", G.MST());
+    // Custo total minímo é o peso da Árvore Geradora Mínima
+    int total_price = G.MST();
+    printf("%d\n", total_price);
 
     return 0;
 }
@@ -65,20 +63,23 @@ int main(int argc, char **argv)
 Graph::Graph(int n)
 {
     this->n = n;
-    this->adj = new list<pair<int, int> >[n];
+    this->adj = new std::list<std::pair<int, int> >[n];
 }
 
 void Graph::add_edge(int u, int v, int peso)
 {
     // Colocando (v, peso) na lista de adjacência de u
-    adj[u].push_back(make_pair(v, peso));
+    adj[u].push_back(std::make_pair(v, peso));
     // Colocando (u, peso) na lista de adjacência de v
-    adj[v].push_back(make_pair(u, peso));
+    adj[v].push_back(std::make_pair(u, peso));
 }
 
 int Graph::MST()
 {
-    priority_queue<pair<int, int>, vector<pair<int, int> >, greater<pair<int, int> > > heap;
+    std::priority_queue<std::pair<int, int>,
+                        std::vector<std::pair<int, int> >,
+                        std::greater<std::pair<int, int> > > heap;
+
     int d[n];                   // Chaves, começam com infinito
     int aresta[n];              // Armazena qual aresta chegou em cada uma
     int na_MST[this->n];        // Quais vertices estão na MST
@@ -91,9 +92,8 @@ int Graph::MST()
         aresta[i] = -1;
     }
 
-    // Nó inicial
     int s = 0;
-    heap.push(make_pair(0, s));
+    heap.push(std::make_pair(0, s));
     d[s] = 0;
 
     while (!heap.empty())
@@ -104,7 +104,7 @@ int Graph::MST()
         na_MST[u] = true;
 
         // Para cada aresta (u, v)
-        list<pair<int, int> >::iterator it;
+        std::list<std::pair<int, int> >::iterator it;
         for (it = adj[u].begin(); it != adj[u].end(); it++)
         {
             int v = it->first;
@@ -114,12 +114,13 @@ int Graph::MST()
             if (na_MST[v] == false && d[v] > peso)
             {
                 d[v] = peso;
-                heap.push(make_pair(peso, v));
+                heap.push(std::make_pair(peso, v));
                 aresta[v] = u;
             }
         }
     }
 
+    // Computando peso total a partir da solução final
     for (int i = 0; i < n; i++)
         peso_MST += d[i];
 
