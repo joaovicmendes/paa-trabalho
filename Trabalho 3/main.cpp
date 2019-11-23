@@ -61,13 +61,13 @@ int mochila(Packet* p, int num_packets, int max_weight)
         A[i] = (int*)malloc(sizeof(int) * (max_weight + 1));
 
     // Casos base
-    for (int j = 0; j < max_weight; j++)
+    for (int j = 0; j < max_weight + 1; j++)
         A[0][j] = 0;
 
     // Prenchendo matriz explorando a subestrutura ótima
-    for (int i = 1; i <= num_packets; i++)
+    for (int i = 1; i < num_packets + 1; i++)
     {
-        for (int j = 0; j <= max_weight; j++)
+        for (int j = 0; j < max_weight + 1; j++)
         {
             if (j < p[i].weight)
                 A[i][j] = A[i - 1][j];
@@ -75,6 +75,6 @@ int mochila(Packet* p, int num_packets, int max_weight)
                 A[i][j] = MAX(A[i-1][j], A[i-1][j-p[i].weight] + p[i].ornaments);
         }
     }
-    
+
     return A[num_packets][max_weight];
 }
