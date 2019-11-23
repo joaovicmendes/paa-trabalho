@@ -10,6 +10,7 @@
 */
 
 #include <iostream>
+#include <cstdlib>
 
 #define MAX(x,y) ((x) > (y) ? (x) : (y))
 
@@ -53,7 +54,11 @@ int main(int argc, char **argv)
 // (com peso e qtd de enfeites de cada), rspeitando dado limite máximo.
 int mochila(Packet* p, int num_packets, int max_weight)
 {
-    int A[num_packets + 1][max_weight + 1];
+    int **A;
+
+    A = (int**)malloc(sizeof(int *) * (num_packets + 1));
+    for (int i = 0; i < num_packets + 1; i++)
+        A[i] = (int*)malloc(sizeof(int) * (max_weight + 1));
 
     // Casos base
     for (int j = 0; j < max_weight; j++)
@@ -61,13 +66,15 @@ int mochila(Packet* p, int num_packets, int max_weight)
 
     // Prenchendo matriz explorando a subestrutura ótima
     for (int i = 1; i <= num_packets; i++)
+    {
         for (int j = 0; j <= max_weight; j++)
         {
             if (j < p[i].weight)
                 A[i][j] = A[i - 1][j];
             else
-                A[i][j] = MAX(A[i - 1][j], A[i - 1][j - p[i].weight] + p[i].ornaments);
+                A[i][j] = MAX(A[i-1][j], A[i-1][j-p[i].weight] + p[i].ornaments);
         }
-
+    }
+    
     return A[num_packets][max_weight];
 }
