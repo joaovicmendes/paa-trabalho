@@ -76,5 +76,11 @@ int mochila(Packet* p, int num_packets, int max_weight)
         }
     }
 
-    return A[num_packets][max_weight];
+    int resp = A[num_packets][max_weight];
+
+    for (int i = 0; i < num_packets + 1; i++)
+        free(A[i]);
+    free(A);
+
+    return resp;
 }
