@@ -51,39 +51,23 @@ int main(int argc, char **argv)
 
 // Função que máximiza o valor (número de enfeites) dado uma lista de pacotes
 // (com peso e qtd de enfeites de cada), rspeitando dado limite máximo.
-// @param Packet *: lista de pacotes disponíveis
-// @param      int: numero de pacotes
-// @param      int: peso máximo disponível
-// @ret        int: número de enfeites máximo que respeita peso
 int mochila(Packet* p, int num_packets, int max_weight)
 {
-    int resp;
-    int  **A;
-    
-    A = (int**)malloc(sizeof(int *) * (num_packets + 1));
-    for (int i = 0; i <= num_packets; i++)
-        A[i] = (int*)malloc(sizeof(int) * (max_weight + 1));
+    int A[num_packets + 1][max_weight + 1];
 
     // Casos base
     for (int j = 0; j < max_weight; j++)
         A[0][j] = 0;
 
-    // Parte que utiliza programação dinâmica
+    // Prenchendo matriz explorando a subestrutura ótima
     for (int i = 1; i <= num_packets; i++)
-    {
         for (int j = 0; j <= max_weight; j++)
         {
             if (j < p[i].weight)
                 A[i][j] = A[i - 1][j];
             else
-                A[i][j] = MAX(A[i-1][j], A[i-1][j-p[i].weight] + p[i].ornaments);
+                A[i][j] = MAX(A[i - 1][j], A[i - 1][j - p[i].weight] + p[i].ornaments);
         }
-    }
 
-    resp = A[num_packets][max_weight];
-    for (int i = 0; i <= num_packets; i++)
-        free(A[i]);
-    free(A);
-    
-    return resp;
+    return A[num_packets][max_weight];
 }
