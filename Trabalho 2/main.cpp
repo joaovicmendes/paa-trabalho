@@ -19,23 +19,23 @@
 #include <queue>
 #include <cstdlib>
 
-#define INF 0x3f3f3f3f 
+#define INF 0x3f3f3f3f
+#define iPair std::pair<int, int>
 
 class Graph
 {
     public:
-    // Construtor
     Graph(int n);
 
-    // Cria uma aresta entre dois vértices v, u pertencentes à [0..n]
+    // Cria uma aresta entre dois vértices v, u pertencentes à [0..n] (não direcionada)
     void add_edge(int u, int v, int peso);
 
     // Retorna o peso dos vértices da Árvore Geradora Mínima
     int MST();
 
     private:
-    int n;                                   // Número de vértices
-    std::list< std::pair<int, int> > *adj;   // Lista de adjacências
+    int                  n; // Número de vértices
+    std::list<iPair > *adj; // Lista de adjacências
 };
 
 int main(int argc, char **argv)
@@ -62,8 +62,8 @@ int main(int argc, char **argv)
 
 Graph::Graph(int n)
 {
-    this->n = n;
-    this->adj = new std::list<std::pair<int, int> >[n];
+    this->n   = n;
+    this->adj = new std::list<iPair >[n];
 }
 
 void Graph::add_edge(int u, int v, int peso)
@@ -76,20 +76,18 @@ void Graph::add_edge(int u, int v, int peso)
 
 int Graph::MST()
 {
-    std::priority_queue<std::pair<int, int>,
-                        std::vector<std::pair<int, int> >,
-                        std::greater<std::pair<int, int> > > heap;
+    std::priority_queue<iPair, std::vector<iPair >, std::greater<iPair > > heap;
 
-    int d[n];                   // Chaves, começam com infinito
-    int aresta[n];              // Armazena qual aresta chegou em cada uma
-    int na_MST[this->n];        // Quais vertices estão na MST
-    int peso_MST = 0;           // Peso total da MST
+    int            d[n]; // Distâncias, começam com infinito
+    int         prev[n]; // Qual aresta chegou em cada uma
+    int na_MST[this->n]; // Quais vertices estão na MST
+    int    peso_MST = 0; // Peso total da MST
 
     for (int i = 0; i < n; i++)
     {
-             d[i] = INF;
+        d[i]      = INF;
         na_MST[i] = false;
-        aresta[i] = -1;
+        prev[i]   = -1;
     }
 
     int s = 0;
@@ -104,7 +102,7 @@ int Graph::MST()
         na_MST[u] = true;
 
         // Para cada aresta (u, v)
-        std::list<std::pair<int, int> >::iterator it;
+        std::list< iPair >::iterator it;
         for (it = adj[u].begin(); it != adj[u].end(); it++)
         {
             int v = it->first;
@@ -115,7 +113,7 @@ int Graph::MST()
             {
                 d[v] = peso;
                 heap.push(std::make_pair(peso, v));
-                aresta[v] = u;
+                prev[v] = u;
             }
         }
     }
