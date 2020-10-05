@@ -22,14 +22,19 @@ def is_there_sum(items, n, sum):
     for i in range(n+1):
         A[i][0] = True
 
-    ## Preenchimento da tabela
-    for i in range(1, n+1):
-        for j in range(1, sum+1):
-            if (items[i-1] > j):
-                A[i][j] = A[i-1][j]
-            else:
-                A[i][j] = A[i-1][j] or A[i-1][j - items[i-1]]
-
+## Preenchimento da tabela
+# Para a soma j existir, deve valer um dos dois casos:
+# 1. O item i é utilizado na soma, e portanto devemos achar se a soma vale
+#    para A[i-1][j - valor_de_i], ou seja com menos itens e uma soma menor
+# 2. O item i não é utilizado na soma, e portanto devemos achar se a soma vale
+#    para A[i-1][j], ou seja a mesma soma mas num subconjunto menor de itens
+for i in range(1, n+1):
+    for j in range(1, sum+1):
+        # Verificação para evitar acessar índice negativo da matriz
+        if (items[i-1] > j):
+            A[i][j] = A[i-1][j]
+        else:
+            A[i][j] = A[i-1][j - items[i-1] or A[i-1][j]]
     return A[n][sum]
 
 def min_difference(coins, n):
