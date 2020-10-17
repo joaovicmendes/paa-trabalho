@@ -32,11 +32,12 @@ private:
 int main()
 {
     int M, E, N, C; // No. de vértices, arestas, tubulações e consultas
-
     scanf("%d %d %d %d ", &M, &E, &N, &C);
     
     Grafo grafo_inocente(M);
+    double dist_inocente;
     Grafo grafo_impostor(M);
+    double dist_impostor;
 
     // Adicionando arestas de corredor (com peso)
     for (int i = 0; i < E; i++)
@@ -57,8 +58,8 @@ int main()
     {
         int v, u;
         scanf("%d %d ", &v, &u);
-        grafo_impostor.add_edge(v, u, 1);
-        grafo_impostor.add_edge(u, v, 1);
+        grafo_impostor.add_edge(v, u, 1.0);
+        grafo_impostor.add_edge(u, v, 1.0);
     }
 
 
@@ -67,13 +68,13 @@ int main()
     {
         int room;
         scanf("%d ", &room);
-        double dist_impostor = grafo_impostor.Dijkstra(room, 0);
-        double dist_inocente = grafo_inocente.Dijkstra(room, 0);
+        dist_impostor = grafo_impostor.Dijkstra(room, 0);
+        dist_inocente = grafo_inocente.Dijkstra(room, 0);
 
-        if (dist_impostor < dist_inocente)
-            printf("defeat\n");
-        else
+        if (dist_inocente <= dist_impostor + 0.01)
             printf("victory\n");
+        else
+            printf("defeat\n");
     }
 
     return 0;
