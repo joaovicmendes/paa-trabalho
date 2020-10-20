@@ -34,23 +34,23 @@ def is_there_sum(items, n, sum):
             if (items[i-1] > j):
                 A[i][j] = A[i-1][j]
             else:
-                A[i][j] = A[i-1][j - items[i-1] or A[i-1][j]]
+                A[i][j] = A[i-1][j-items[i-1]] or A[i-1][j]
                 
     return A[n][sum]
 
 def min_difference(coins, n):
     # Se a divisão das moedas fossem iguais
-    s_max = ceil(sum(coins)/2)
+    s_max = sum(coins)/2
     s = sum(coins)//2
     diff = -1
 
     # Tentando encontrar a maior soma menor que s_max
     while s >= 1 and diff == -1:
         if is_there_sum(coins, n, s):
-            diff = (s_max - s)
+            diff = s_max - s
         else:
             s -= 1
-    return diff
+    return int(diff*2)
 
 
 # Leitura dos valores na entrada
