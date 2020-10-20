@@ -34,44 +34,34 @@ int main()
     int M, E, N, C; // No. de vértices, arestas, tubulações e consultas
     scanf("%d %d %d %d ", &M, &E, &N, &C);
     
-    Grafo grafo_inocente(M);
-    double dist_inocente;
-    Grafo grafo_impostor(M);
-    double dist_impostor;
+    Grafo inocente(M), impostor(M);
 
-    // Adicionando arestas de corredor (com peso)
+    // Adicionando arestas de corredor em ambos
     for (int i = 0; i < E; i++)
     {
         int v, u;
         double w;
         scanf("%d %d %lf ", &v, &u, &w);
 
-        grafo_inocente.add_edge(v, u, w);
-        grafo_inocente.add_edge(u, v, w);
-
-        grafo_impostor.add_edge(v, u, w);
-        grafo_impostor.add_edge(u, v, w);
+        inocente.add_edge(v, u, w);
+        impostor.add_edge(v, u, w);
     }
 
-    // Adicionando arestas de tubulação para o impostor
+    // Adicionando arestas de tubulação (para o impostor apenas)
     for (int i = 0; i < N; i++)
     {
         int v, u;
         scanf("%d %d ", &v, &u);
-        grafo_impostor.add_edge(v, u, 1.0);
-        grafo_impostor.add_edge(u, v, 1.0);
+        impostor.add_edge(v, u, 1.0);
     }
 
-
-    // Realizando consultas
+    // Consultas
     for (int i = 0; i < C; i++)
     {
-        int room;
-        scanf("%d ", &room);
-        dist_impostor = grafo_impostor.Dijkstra(room, 0);
-        dist_inocente = grafo_inocente.Dijkstra(room, 0);
+        int origin;
+        scanf("%d ", &origin);
 
-        if (dist_inocente <= dist_impostor + 0.01)
+        if (inocente.Dijkstra(origin, 0) <= impostor.Dijkstra(origin, 0) + 0.01)
             printf("victory\n");
         else
             printf("defeat\n");
@@ -106,6 +96,7 @@ void Grafo::add_edge(int v, int u, double w) const
     }
 
     this->adj[v].push_back(std::make_pair(u, w));
+    this->adj[u].push_back(std::make_pair(v, w));
 }
 
 double Grafo::Dijkstra(int ori, int dest) const
